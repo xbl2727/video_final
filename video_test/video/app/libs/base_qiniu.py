@@ -16,8 +16,8 @@ class Qiniu(object):
 
         token = self.q.upload_token(self.bucket_name, name)
         ret, info = put_file(token, name, path)
-        print(ret)
-        print(info)
+        print("ret=",ret)
+        print("info=",info)
         if 'key' in ret:
             remote_url = '/'.join([self.base_url, ret['key']])
             return remote_url

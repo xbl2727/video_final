@@ -7,6 +7,8 @@ import shutil
 from django.conf import settings
 from app.models import Video, VideoSub
 from app.tasks.task import video_task
+from app.libs.base_qiniu import video_qiniu
+
 
 
 
@@ -24,6 +26,10 @@ def remove_path(paths):
         if os.path.exists(path):
             os.remove(path)
 
+def remove_path(paths):
+    for path in paths:
+        if os.path.exists(path):
+            os.remove(path)
 
 def handle_video(video_file, video_id, number):
 
@@ -38,16 +44,40 @@ def handle_video(video_file, video_id, number):
 
     out_name = '{}_{}'.format(int(time.time()), video_file.name.split('.')[0])
     out_path = '/'.join([out_path, out_name])
-    command = 'ffmpeg -i {} -c copy {}.mp4'.format(path_name, out_path)
+    print("path_name: ",in_path)
+    print("out_path: ",out_path)
+    command = 'D:/ffmpeg/ffmpeg-20200324-e5d25d1-win64-static/bin/ffmpeg -i {} -c copy {}.mp4'.format(path_name, out_path)
 
-    video = Video.objects.get(pk=video_id)
-    video_sub = VideoSub.objects.create(
-        video=video,
-        url='',
-        number=number
-    )
-
-    video_task.delay(
-        command, out_path, path_name, video_file.name, video_sub.id)
-
+    os.system(command)
+    out_name='.'.join([out_path,'mp4'])
+    if not os.path.exists(out_name):
+        remove_path([out_name, path_name])
+        return False
+    url = video_qiniu.put(video_file.name,out_name)
+    if url:
+        video = Video.objects.get(pk=video_id)
+        try:
+            VideoSub.objects.create(
+                video = video,
+                url = url,
+                number = number
+            )
+            return  True
+        except:
+            return False
+        finally:
+            remove_path([out_name,path_name])
     return False
+    # video = Video.objects.get(pk=video_id)
+    # video_sub = VideoSub.objects.create(
+    #     video=video,
+    #     url='',
+    #     number=number
+    # )
+    #
+    # video_task.delay(
+    #     command, out_path, path_name, video_file.name, video_sub.id)
+
+
+   # print("url= ",url)
+
