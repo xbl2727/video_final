@@ -9,14 +9,14 @@
 </head>
 <body>
 <%! from django.shortcuts import reverse %>
-<header>导航</header>
+<header >视频分割平台</header>
 <div class="base-content">
 ${self.content()}
 </div>
 <footer>
 <ul>
-    <li><a href="${reverse('client_ex_video')}">外链</a></li>
-    <li><a href="${reverse('client_cus_video')}">内链</a></li>
+    <!--<li><a href="${reverse('client_ex_video')}">外链</a></li>-->
+    <li><a href="${reverse('client_cus_video')}">分割</a></li>
     <li><a href="${reverse('client_auth')}">我的</a></li>
 </ul>
 </footer>

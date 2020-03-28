@@ -20,7 +20,9 @@ class ExternaVideo(View):
         error = request.GET.get('error', '')
         data = {'error': error}
 
-        cus_videos = Video.objects.filter(from_to=FromType.custom.value)
+        cus_videos=Video.objects.filter(from_user=request.user)
+
+       # cus_videos = Video.objects.filter(from_to=FromType.custom.value)
         ex_videos = Video.objects.exclude(from_to=FromType.custom.value)
         data['ex_videos'] = ex_videos
         data['cus_videos'] = cus_videos
@@ -35,6 +37,7 @@ class ExternaVideo(View):
         nationality = request.POST.get('nationality')
         info = request.POST.get('info')
         video_id = request.POST.get('video_id')
+        username = request.user
 
         if video_id:
             reverse_path = reverse(
@@ -68,7 +71,8 @@ class ExternaVideo(View):
                     video_type=video_type,
                     from_to=from_to,
                     nationality=nationality,
-                    info=info
+                    info=info,
+                    from_user = username
                 )
             except:
                 return redirect('{}?error={}'.format(reverse_path, '创建失败'))
@@ -81,6 +85,7 @@ class ExternaVideo(View):
                 video.from_to = from_to
                 video.nationality = nationality
                 video.info = info
+                video.from_user = username
                 video.save()
             except:
                 return redirect('{}?error={}'.format(reverse_path, '修改失败'))
@@ -207,3 +212,4 @@ class VideoUpdateStatus(View):
         video.save()
 
         return redirect(reverse('externa_video'))
+

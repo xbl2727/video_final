@@ -60,6 +60,7 @@ class Video(models.Model):
     status = models.BooleanField(default=True, db_index=True)
     created_time = models.DateTimeField(auto_now_add=True)
     updated_time = models.DateTimeField(auto_now=True)
+    from_user = models.CharField(max_length=500, default='')
 
     class Meta:
         unique_together = ('name', 'video_type', 'from_to', 'nationality')

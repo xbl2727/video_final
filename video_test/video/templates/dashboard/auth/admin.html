@@ -5,7 +5,10 @@
   prev_page = '{}?page={}'.format(reverse('admin_manger'), page_num - 1)
   next_page = '{}?page={}'.format(reverse('admin_manger'), page_num + 1)
 %>
-<h1>管理员模块</h1>
+<div style="margin-left: 30%;">
+   <h1>管理员列表</h1>
+</div>
+
 % if page_num > 1:
 <a href="${prev_page}">上一页</a>
 % endif

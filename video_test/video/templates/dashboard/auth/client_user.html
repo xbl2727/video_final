@@ -1,7 +1,10 @@
 <%inherit file="../base.html" />
 <%! from django.shortcuts import reverse %>
 <%def name="content()">
-<h1>用户模块</h1>
+<div style=" margin-left: 30%;">
+    <h1>用户列表</h1>
+</div>
+
 <table class="table">
     <thead>
       <tr>
@@ -9,6 +12,7 @@
           <th>状态</th>
           <th>创建时间</th>
           <th>控制</th>
+          <th>视频</th>
       </tr>
     </thead>
     <tbody>
@@ -25,6 +29,13 @@
             % endif
             ${csrf_token}
         </td>
+        <td>
+            <a href="${reverse('externa_video')}">查看</a>
+
+
+            ${csrf_token}
+        </td>
+
         </tr>
         % endfor
 

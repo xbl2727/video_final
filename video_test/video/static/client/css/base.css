@@ -9,16 +9,16 @@ html {
 }
 
 body {
-  max-width: 640px;
+
   position: relative;
   margin: 0 auto;
-  font-size: 16px;
+  font-size: 14px;
 }
 
 header, footer {
   width: 100%;
-  background: #000000;
-  color: green;
+  background:#E0E0E0;
+  color: #404040;
   height: 3rem;
   text-align: center;
   line-height: 3rem;
@@ -52,7 +52,7 @@ footer ul li {
 }
 
 footer ul li a {
-    color: green;
+    color: #404040;
     text-decoration: none;
 }
 
