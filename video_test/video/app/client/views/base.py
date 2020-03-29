@@ -8,4 +8,4 @@ class Index(View):
     TEMPLATE = 'client/base.html'
 
     def get(self, request):
-        return redirect(reverse('client_ex_video'))
+        return redirect(reverse('client_auth'))

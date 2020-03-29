@@ -5,65 +5,26 @@ from django.db import models
 
 
 class VideoType(Enum):
-    movie = 'movie'
-    cartoon = 'cartoon'
-    episode = 'episode'
-    variety = 'variety'
-    other = 'other'
+    input = 'input'
+    output = 'output'
 
-VideoType.movie.label = '电影'
-VideoType.cartoon.label = '动漫'
-VideoType.episode.label = '剧集'
-VideoType.variety.label = '综艺'
-VideoType.other.label = '其他'
-
-
-class FromType(Enum):
-    youku = 'youku'
-    custom = 'custom'
-
-FromType.youku.label = '优酷'
-FromType.custom.label = '自制'
-
-
-class NationalityType(Enum):
-    china = 'china'
-    japan = 'japan'
-    korea = 'korea'
-    america = 'america'
-    other = 'other'
-
-NationalityType.china.label = '中国'
-NationalityType.japan.label = '日本'
-NationalityType.korea.label = '韩国'
-NationalityType.america.label = '美国'
-NationalityType.other.label = '其他'
-
-
-class IdentityType(Enum):
-    to_star = 'to_star'
-    supporting_rule = 'supporting_rule'
-    director = 'director'
-
-IdentityType.to_star.label = '主演'
-IdentityType.supporting_rule.label = '配角'
-IdentityType.director.label = '导演'
+VideoType.input.label = '原版'
+VideoType.output.label = '输出'
 
 
 class Video(models.Model):
-    name = models.CharField(max_length=100, null=False)
-    image = models.CharField(max_length=500, default='')
-    video_type = models.CharField(max_length=50, default=VideoType.other.value)
-    from_to = models.CharField(max_length=20, null=False, default=FromType.custom.value)
-    nationality = models.CharField(max_length=20, default=NationalityType.other.value)
-    info = models.TextField()
+    name = models.CharField(max_length=100, default='')
+    video_type = models.CharField(max_length=50, default=VideoType.input.value)
     status = models.BooleanField(default=True, db_index=True)
     created_time = models.DateTimeField(auto_now_add=True)
     updated_time = models.DateTimeField(auto_now=True)
-    from_user = models.CharField(max_length=500, default='')
+    from_user = models.CharField(max_length=100, default='')
+    url = models.CharField(max_length=500,default='' )
 
     class Meta:
-        unique_together = ('name', 'video_type', 'from_to', 'nationality')
+        index_together = ('name', 'video_type', 'from_user')
+        #联合索引，联合同步查询，提高效率
+        #unique_together :联合约束，不能重复，不能一样
 
     def __str__(self):
         return self.name

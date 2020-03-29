@@ -5,7 +5,7 @@ from django.shortcuts import redirect, reverse
 from app.libs.base_render import render_to_response
 from app.utils.permission import dashboard_auth
 from app.model.video import (
-    VideoType, FromType, NationalityType, IdentityType,
+    VideoType,
     Video, VideoSub, VideoStar)
 from app.models import Comment
 from app.utils.common import check_and_get_video_type, handle_video
@@ -21,74 +21,39 @@ class ExternaVideo(View):
         data = {'error': error}
 
         cus_videos=Video.objects.filter(from_user=request.user)
-
-       # cus_videos = Video.objects.filter(from_to=FromType.custom.value)
-        ex_videos = Video.objects.exclude(from_to=FromType.custom.value)
-        data['ex_videos'] = ex_videos
         data['cus_videos'] = cus_videos
 
         return render_to_response(request, self.TEMPLATE, data=data)
 
     def post(self, request):
-        name = request.POST.get('name')
-        image = request.POST.get('image')
-        video_type = request.POST.get('video_type')
-        from_to = request.POST.get('from_to')
-        nationality = request.POST.get('nationality')
-        info = request.POST.get('info')
-        video_id = request.POST.get('video_id')
+
         username = request.user
+        url = request.FILES.get('url')
+        video_id = request.POST.get('video_id')
 
-        if video_id:
-            reverse_path = reverse(
-                'video_update', kwargs={'video_id': video_id})
+        reverse_path = reverse('externa_video')
+
+        if url :
+            handle_video(url, username)
         else:
-            reverse_path = reverse('externa_video')
+            return redirect('{}?error={}'.format(reverse_path, '未选择文件'))
 
-        if not all([name, image, video_type, from_to, nationality, info]):
-            return redirect('{}?error={}'.format(reverse_path, '缺少必要字段'))
-
-        result = check_and_get_video_type(
-            VideoType, video_type, '非法的视频类型')
-        if result.get('code') != 0:
-            return redirect('{}?error={}'.format(reverse_path, result['msg']))
-
-        result = check_and_get_video_type(
-            FromType, from_to, '非法的来源')
-        if result.get('code') != 0:
-            return redirect('{}?error={}'.format(reverse_path, result['msg']))
-
-        result = check_and_get_video_type(
-            NationalityType, nationality, '非法的国籍')
-        if result.get('code') != 0:
-            return redirect('{}?error={}'.format(reverse_path, result['msg']))
-
-        if not video_id:
-            try:
-                Video.objects.create(
-                    name=name,
-                    image=image,
-                    video_type=video_type,
-                    from_to=from_to,
-                    nationality=nationality,
-                    info=info,
-                    from_user = username
-                )
-            except:
-                return redirect('{}?error={}'.format(reverse_path, '创建失败'))
-        else:
-            try:
-                video = Video.objects.get(pk=video_id)
-                video.name = name
-                video.image = image
-                video.video_type = video_type
-                video.from_to = from_to
-                video.nationality = nationality
-                video.info = info
-                video.from_user = username
-                video.save()
-            except:
-                return redirect('{}?error={}'.format(reverse_path, '修改失败'))
+        # if not video_id:
+        #     try:
+        #         Video.objects.create(
+        #             from_user = username,
+        #             url = url
+        #         )
+        #     except:
+        #         return redirect('{}?error={}'.format(reverse_path, '创建失败1'))
+        # else:
+        #     try:
+        #         video = Video.objects.get(pk=video_id)
+        #         video.from_user = username
+        #         video.url = url
+        #         video.save()
+        #     except:
+        #         return redirect('{}?error={}'.format(reverse_path, '修改失败'))
         return redirect(reverse('externa_video'))
 
 

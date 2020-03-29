@@ -51,7 +51,7 @@ $('#login-submit').click(function(){
             if (data.code) {
                 alert(data.msg)
             } else {
-                window.location.href = '/client/video/ex';
+                window.location.href = '/client/auth';
             }
         },
         fail: function(e){

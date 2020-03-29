@@ -31,7 +31,7 @@ def remove_path(paths):
         if os.path.exists(path):
             os.remove(path)
 
-def handle_video(video_file, video_id, number):
+def handle_video(video_file,username):
 
     in_path = os.path.join(settings.BASE_DIR, 'app/dashboard/temp_in')
     out_path = os.path.join(settings.BASE_DIR, 'app/dashboard/temp_out')
@@ -54,30 +54,19 @@ def handle_video(video_file, video_id, number):
         remove_path([out_name, path_name])
         return False
     url = video_qiniu.put(video_file.name,out_name)
+    print("url= ",url)
+    print("username= ", username)
     if url:
-        video = Video.objects.get(pk=video_id)
         try:
-            VideoSub.objects.create(
-                video = video,
-                url = url,
-                number = number
+            Video.objects.create(
+                name = video_file,
+                from_user = username,
+                url = url
             )
             return  True
-        except:
-            return False
+        except Exception as e:
+            print("error = ",e)
         finally:
             remove_path([out_name,path_name])
     return False
-    # video = Video.objects.get(pk=video_id)
-    # video_sub = VideoSub.objects.create(
-    #     video=video,
-    #     url='',
-    #     number=number
-    # )
-    #
-    # video_task.delay(
-    #     command, out_path, path_name, video_file.name, video_sub.id)
-
-
-   # print("url= ",url)
 
